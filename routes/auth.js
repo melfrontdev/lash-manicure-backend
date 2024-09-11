@@ -1,37 +1,46 @@
+// routes/auth.js
 const express = require('express');
-const bcrypt = require('bcryptjs');
+const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
 const router = express.Router();
+const bcrypt = require('bcrypt');
 
-// Registrar
+// Register endpoint
 router.post('/register', async (req, res) => {
-  const { name, email, password } = req.body;
+  const { nome, email, telefone, senha, cep, street, number, neighborhood, reference, city } = req.body;
+  
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ name, email, password: hashedPassword });
-    await newUser.save();
-    res.status(201).json({ message: 'Usuário registrado com sucesso' });
-  } catch (error) {
-    res.status(500).json({ error: 'Erro no servidor' });
+    const user = new User({ nome, email, telefone, senha, cep, street, number, neighborhood, reference, city });
+    await user.save();
+    res.status(201).send('User registered successfully');
+  } catch (err) {
+    res.status(400).send(err.message);
   }
 });
 
-// Login
+// Login endpoint
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, senha } = req.body;
+  
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ error: 'Usuário não encontrado' });
+    if (!user) return res.status(400).send('User not found');
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ error: 'Senha incorreta' });
+    const isMatch = await user.comparePassword(senha);
+    if (!isMatch) return res.status(400).send('Invalid credentials');
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.json({ token });
-  } catch (error) {
-    res.status(500).json({ error: 'Erro no servidor' });
+  } catch (err) {
+    res.status(400).send(err.message);
   }
+});
+
+// Forgot Password endpoint (optional, for implementing password reset functionality)
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  // Add logic to handle password reset here
+  res.send('Password reset link sent');
 });
 
 module.exports = router;

@@ -1,9 +1,24 @@
+// models/appointment.js
 const mongoose = require('mongoose');
 
-const AppointmentSchema = new mongoose.Schema({
-  clientName: { type: String, required: true },
-  date: { type: Date, required: true },
-  time: { type: String, required: true },
+const appointmentSchema = new mongoose.Schema({
+  cliente: {
+    type: String,
+    required: true
+  },
+  data: {
+    type: Date,
+    required: true
+  },
+  hora: {
+    type: String,
+    required: true
+  },
+  tipo: {
+    type: String,
+    enum: ['No Salão', 'A Domicílio'],
+    required: true
+  }
 });
 
-module.exports = mongoose.model('Appointment', AppointmentSchema);
+module.exports = mongoose.model('Appointment', appointmentSchema);
