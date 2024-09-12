@@ -1,0 +1,10 @@
+version: '3.3'
+
+services:
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_USER: melvieira
+      MYSQL_ROOT_PASSWORD: 080905R@ni
+      MYSQL_DATABASE: lashdesign
