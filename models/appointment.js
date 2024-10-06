@@ -1,24 +1,24 @@
 // models/appointment.js
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/db');
 
-const appointmentSchema = new mongoose.Schema({
+const Appointment = sequelize.define('Appointment', {
   cliente: {
-    type: String,
-    required: true
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   data: {
-    type: Date,
-    required: true
+    type: DataTypes.DATE,
+    allowNull: false,
   },
   hora: {
-    type: String,
-    required: true
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   tipo: {
-    type: String,
-    enum: ['No Salão', 'A Domicílio'],
-    required: true
-  }
+    type: DataTypes.ENUM('No Salão', 'A Domicílio'),
+    allowNull: false,
+  },
 });
 
-module.exports = mongoose.model('Appointment', appointmentSchema);
+module.exports = Appointment;
